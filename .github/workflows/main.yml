@@ -1,0 +1,9 @@
+name: sample actions
+on: [push, workflow_dispatch]
+
+jobs:
+  sample-job:
+    runs-on: just a job
+    steps:
+      - name: print hello job
+      - run: echo "hello job"
