@@ -1,9 +1,11 @@
-name: sample actions
-on: [push, workflow_dispatch]
+name: Sample Workflow
+
+on: 
+  [push, workflow_dispatch]
 
 jobs:
   sample-job:
-    runs-on: just a job
+    runs-on: ubuntu-latest  
     steps:
-      - name: print hello job
-      - run: echo "hello job"
+      - name: Print Hello Job
+        run: echo "hello job"
