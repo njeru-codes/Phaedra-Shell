@@ -9,7 +9,7 @@ import string
 
 target_host="0.0.0.0"
 target_port=5030
-global env_mapping
+env_mapping=None
 
 default_env_variables=[
     "ALLUSERSPROFILE",
