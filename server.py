@@ -2,9 +2,18 @@ import socket
 import sys
 import threading
 import getopt
+import logging
+import signal
+
+
+logging.basicConfig(level=logging.INFO)
+
+
 
 host="0.0.0.0"
 port=5010
+server =None
+
 asci_art=r"""
                             _____  _                    _                  _____ _          
                 |  __ \| |                  | |                / ____| |        | | |
@@ -43,13 +52,20 @@ Notes:
 def encode_data(data: str) -> bytes:return data.encode('utf-8')
 def decode_data(data: bytes) -> str:return data.decode('utf-8')
 
+def shutdown_server(signal , frame):
+    global server
+    logging.info("---closing down server---")
+    server.close()
+    sys.exit(0)
+
 
 def send_command(client_socket, command:str):
     try:
         client_socket.send(encode_data(command))
     except Exception as error:
-        print('ERROR: sending command failed')
-    
+        logging.error('ERROR: sending command failed')
+
+
 
 def handle_connection(client_socket):
     try:
@@ -63,17 +79,17 @@ def handle_connection(client_socket):
                 client_socket.send( encode_data(command))
                 response = client_socket.recv(4096)
                 print(f'output: {decode_data(response)}')
+
             elif command =='exit':
                 client_socket.close()
                 break
-                
-            
+                   
     except Exception as error:
-        print(f"ERROR: {str(error)}")
+        logging.error(f"ERROR: {str(error)}")
         client_socket.close()
 
 def main():
-    global port , host
+    global port , host , server
     print(asci_art)
 
     try:
@@ -88,7 +104,7 @@ def main():
                 sys.exit(4)
 
     except getopt.GetoptError as error:
-        print(f'OPT ERROR: {str(error)}')
+        logging.error(f'OPT ERROR: {str(error)}')
         sys.exit(3)
 
 
@@ -96,23 +112,25 @@ def main():
     server.bind( (host,port) )
     server.listen(5)
 
-    print(f"server is listening on {host}:{port}")
-
+    logging.info(f"server is listening on {host}:{port}")
     
     try:
         while True:
             client, addr = server.accept()
-            print(f"received connection from {str(addr)}")
+            logging.info(f"received connection from {str(addr[0])}:{str(addr[1])}")
+
             server_thread = threading.Thread( target= handle_connection , args=(client,))  
             server_thread.start()
 
     except KeyboardInterrupt as error:
-            print("---closing down server---")
+            logging.info("---closing down server---")
     finally:
-        server.close()   
+        server.close()
+        sys.exit(1)  
     
     
     
         
 if __name__=="__main__":
+    signal.signal(signal.SIGINT , shutdown_server)
     main()
