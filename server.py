@@ -4,7 +4,7 @@ import threading
 import getopt
 
 host="0.0.0.0"
-port=5050
+port=5010
 asci_art=r"""
                             _____  _                    _                  _____ _          
                 |  __ \| |                  | |                / ____| |        | | |
@@ -15,11 +15,30 @@ asci_art=r"""
             """
 
 
+def help_docs():
+    help_text = """
+Usage: python3 server.py [options]
+
+Options:
+    -h, --help              Show this help message and exit
+    -p, --port <port>       Specify the port on which the server should listen (default: 5050)
+    -a, --address <address> Specify the host IP address to listen on (default: 0.0.0.0)
+
+Description:
+    This is a simple TCP server that listens for incoming client connections and allows the client to send commands for execution.
+
+Examples:
+    python3 server.py -p 5010 -a 127.0.0.1  Start the server listening on port 5010 on localhost
+    python3 server.py -a 0.0.0.0          Start the server listening on all interfaces
+    python3 server.py --help              Display this help message
+
+Notes:
+    The server can handle multiple client connections using threads.
+    To exit a connection, type 'exit' when prompted for input.
+"""
+    print(help_text)
 
 
-
-def usage():
-    print('usage docs')
 
 def encode_data(data: str) -> bytes:return data.encode('utf-8')
 def decode_data(data: bytes) -> str:return data.decode('utf-8')
@@ -54,26 +73,22 @@ def handle_connection(client_socket):
         client_socket.close()
 
 def main():
-    global port
+    global port , host
     print(asci_art)
 
-    if not len( sys.argv[1:]):
-        usage()
-        sys.exit(2)
-    
     try:
-        print("getting opts")
-        opts , args  = getopt.getopt( sys.argv[1:],"hp:", ['help', 'port='])
+        opts , args  = getopt.getopt( sys.argv[1:],"hl:p:", ['help', 'port=', '--listein'])
         for o, a in opts:
             if o in ('-p', '--port'):
                 port = int(a)
+            if o in ('-l', '--listen'):
+                host = a
             if o in ('-h', '--help'):
-                print('help docs')
+                help_docs()
                 sys.exit(4)
 
     except getopt.GetoptError as error:
         print(f'OPT ERROR: {str(error)}')
-        usage()
         sys.exit(3)
 
 
