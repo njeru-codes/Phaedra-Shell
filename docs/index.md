@@ -1,4 +1,4 @@
-# Welcome to MkDocs
+# Phaedra-Shell Documentation
 
 For full documentation visit [mkdocs.org](https://www.mkdocs.org).
 

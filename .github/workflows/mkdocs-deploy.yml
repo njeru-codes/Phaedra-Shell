@@ -3,20 +3,32 @@ name: Deploy MkDocs
 on:
   push:
     branches:
-      - main
+      - main  # Change this if your default branch is different
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.x'
-      - name: Install MkDocs
+          python-version: '3.x'  # Use the latest version of Python
+
+      - name: Install MkDocs and required packages
         run: |
           pip install mkdocs
-      - name: Build and Deploy
-        run: |
-          mkdocs gh-deploy --force
+          pip install mkdocs-material  # Optional: Install a theme like Material
+
+      - name: Build the documentation
+        run: mkdocs build --strict
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          publish_branch: gh-pages  # Change this if you want a different branch

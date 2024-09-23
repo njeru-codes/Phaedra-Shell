@@ -1,1 +1,3 @@
-site_name: My Docs
+site_name: Phaedra -Shell documentation
+nav:
+  - Home: index.md
