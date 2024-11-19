@@ -1,0 +1,20 @@
+name: Deploy MkDocs to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Trigger this action on pushes to the main branch
+  pull_request:
+    branches:
+      - main  # Optionally, deploy when a pull request is merged into main
+
+jobs:
+  build:
+    name: Build and Deploy MkDocs
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the code
+    - name:  test deploy
+      run:  echo "hello world"
+    
